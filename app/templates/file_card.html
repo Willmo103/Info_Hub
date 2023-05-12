@@ -23,7 +23,7 @@
             </div>
             <a href="{{ url_for('routes.download_file', file_id=file.id) }}" class="btn btn-primary btn-sm"
                 id="downloadBtn">Download</a>
-            {% if file.is_editable(user.id) %}
+            {% if file.is_editable(user_id) %}
             <button type="button" class="btn btn-secondary btn-sm" data-bs-toggle="modal"
                 data-bs-target="#fileModal{{ file.id }}">More Options</button>
             {% endif %}

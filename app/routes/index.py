@@ -17,6 +17,7 @@ def index_page():
         "index.html",
         notes=notes,
         files=files,
+        user_id=user_id,
         user=current_user,
         title="Info_Hub",
     )

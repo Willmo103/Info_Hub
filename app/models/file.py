@@ -63,9 +63,9 @@ class File(db.Model):
         db.session.commit()
 
     def is_editable(self, user_id: int) -> bool:
-
+        if user_id is None:
+            return False
         from app.models.user import User
-
         return (
             self.is_owned_by_user(user_id)
             or User.query.filter_by(id=user_id).first().is_admin()
