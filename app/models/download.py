@@ -20,7 +20,7 @@ class Download(db.Model):
     def __init__(
         self,
         file_id: int,
-        user_id = None,
+        user_id=None,
         download_date: datetime = datetime.utcnow(),
     ) -> None:
         self.user_id = user_id

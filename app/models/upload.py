@@ -21,7 +21,7 @@ class Upload(db.Model):
     def __init__(
         self,
         file_id: int,
-        user_id = None,
+        user_id=None,
     ) -> None:
         self.user_id = user_id
         self.file_id = file_id

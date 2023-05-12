@@ -3,12 +3,12 @@ version: '3.8'
 services:
   web:
     container_name: infoDock-v2.0
-    image: willmo103/note-server:latest
+    build: .
     working_dir: /src
     volumes:
-      - ./uploads:/src/uploads
+      - .:/src
     ports:
-     - "4202:4202"
+     - "4204:4204"
     environment:
        - SECRET_KEY=${SECRET_KEY}
        - DATABASE_URL_POSTGRES=${DATABASE_URL_POSTGRES}
@@ -21,7 +21,4 @@ services:
       - .env
     tty: true
     restart: always
-
-volumes:
-  uploads: {}
-
+    command: "flask run --host='0.0.0.0' --port=4204 --debug"

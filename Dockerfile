@@ -20,5 +20,4 @@ EXPOSE 4202
 ENV FLASK_APP=app
 
 # Run app.py when the container launches
-# CMD ["flask", "run", "port=5000", "host=0.0.0.0"]
 CMD ["flask", "run", "--host=0.0.0.0", "--port=4202"]

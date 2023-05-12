@@ -30,7 +30,7 @@ class File(db.Model):
         user_id: int = None,
         date_posted: datetime = datetime.utcnow(),
         private: bool = False,
-        details = None,
+        details=None,
     ) -> None:
         self.file_name = file_name
         self.user_id = user_id
@@ -58,7 +58,7 @@ class File(db.Model):
         try:
             os.remove(os.path.join(_upload_folder, self.file_name))
         except FileNotFoundError:
-            print("File not found")
+            raise Exception("File not found")
         self.deleted = True
         db.session.commit()
 
@@ -128,18 +128,12 @@ class File(db.Model):
     @staticmethod
     def scan_folder() -> Generator[str, None, None]:
         for file in os.listdir(_upload_folder):
-            print("File: ", file)
             yield file
 
     @staticmethod
     def get_admin_files(current_user):
         if current_user.is_admin():
             return File.query.all()
-
-    @classmethod
-    def init_with_id(cls, filename: str):
-        file = File(file_name=filename)
-        return file.save()
 
     @staticmethod
     def search(search_term: str, user_id) -> List:
@@ -155,3 +149,10 @@ class File(db.Model):
                 if file.can_be_viewed(user_id) and not file.deleted
             ]
         return []
+
+    @classmethod
+    def init_with_id(cls, filename: str):
+        file = File(file_name=filename)
+        file.save()
+        db.session.refresh(file)
+        return file

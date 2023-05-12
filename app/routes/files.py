@@ -19,6 +19,7 @@ _upload_folder: str = os.environ.get("UPLOAD_FOLDER")
 
 @endpoint.route("/file/upload", methods=["POST"])
 def upload_file():
+    # check which field the file was uploaded to
     form = FileUploadForm()
     if form.file.data is None:
         uploaded_file = form.file_dz.data
@@ -27,30 +28,30 @@ def upload_file():
     else:
         flash("Failed to upload file")
         return redirect(url_for("routes.index_page"))
-
+    # get secure filename and create file object with s new id
     secure_filename = s_fn(uploaded_file.filename)
-
+    file = File.init_with_id(secure_filename)
+    # update file object with form data
     if current_user.is_authenticated:
-        new_file: File = File.query.filter_by(file_name=secure_filename).first()
-        if new_file:
-            new_file.user_id = current_user.id
-            new_file.private = form.private.data
-            new_file.details = form.details.data
-            new_file.save()
+        if file:
+            file.user_id = current_user.id
+            file.private = form.private.data
+            file.details = form.details.data
+            file.save()
         else:
             raise Exception("Failed to create new file")
-
         new_upload = Upload(
-            new_file.id,
+            file.id,
             current_user.id,
         )
         saved = new_upload.save()
     else:
-        new_file: File = File.query.filter_by(file_name=secure_filename).first()
-        new_upload = Upload(file_id=new_file.id)
+        # if the user is not logged in, create an anonymous file
+        new_upload = Upload(file_id=file.id)
         saved = new_upload.save()
-    if saved and new_file.id is not None:
-        uploaded_file.save(os.path.join(_upload_folder, secure_filename))
+    if saved and file.id is not None:
+        # make sure the file has been saved and the upload recorded before saving the file
+        uploaded_file.save(os.path.join(_upload_folder, file.file_name))
         flash("File uploaded successfully")
         return redirect(url_for("routes.index_page"))
 
